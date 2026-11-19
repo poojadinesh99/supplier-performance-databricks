@@ -1,5 +1,7 @@
 # Lieferantenleistung im Überblick – Supplier Performance on Databricks
 
+[![License](https://img.shields.io/github/license/poojadinesh99/supplier-performance-databricks)](https://github.com/poojadinesh99/supplier-performance-databricks/blob/main/LICENSE)
+
 PySpark pipeline and AI/BI dashboard that score 12 suppliers on delivery performance, built on synthetic SAP MM procurement data in Databricks (Free Edition).
 
 **Stack:** Databricks · PySpark · Delta Lake · Unity Catalog · Databricks SQL · AI/BI Dashboards
@@ -78,3 +80,7 @@ Seven synthetic tables modelled on SAP MM, stored as Delta tables in `workspace.
 1. Load the seven tables into `workspace.default` in a Databricks workspace.
 2. Import and run `notebooks/Supplier_Performance.py`.
 3. Import `dashboard/Lieferantenleistung.lvdash.json` via **Dashboards → Create → Import dashboard from file** and attach a SQL warehouse.
+
+## License
+
+[MIT](LICENSE)
