@@ -1,0 +1,761 @@
+{
+  "datasets": [
+    {
+      "name": "eea9a512",
+      "displayName": "supplier_performance_gold",
+      "config": {
+        "version": "1.1",
+        "source": "workspace.default.supplier_performance_gold",
+        "dimensions": [
+          {
+            "name": "Lieferant_ID",
+            "expr": "source.Lieferant_ID",
+            "displayName": "Lieferanten-ID"
+          },
+          {
+            "name": "Lieferant_Name",
+            "expr": "source.Lieferant_Name",
+            "displayName": "Lieferant"
+          },
+          {
+            "name": "Termintreue",
+            "expr": "source.Termintreue",
+            "displayName": "Termintreue"
+          },
+          {
+            "name": "Durchschnittliche_Verspätung_Tage",
+            "expr": "source.`Durchschnittliche_Verspätung_Tage`",
+            "displayName": "Ø Verspätung (Tage)"
+          },
+          {
+            "name": "Lieferfüllgrad",
+            "expr": "source.`Lieferfüllgrad`",
+            "displayName": "Lieferfüllgrad"
+          },
+          {
+            "name": "Lieferantenbewertung",
+            "expr": "source.Lieferantenbewertung",
+            "displayName": "Bewertung"
+          }
+        ],
+        "measures": [
+          {
+            "name": "count",
+            "expr": "COUNT(*)",
+            "comment": "Represents the total number of rows in the dataset. Use this measure to count all",
+            "displayName": "Count"
+          }
+        ]
+      }
+    },
+    {
+      "name": "tbl_sorted",
+      "displayName": "lieferanten_tabelle",
+      "queryLines": [
+        "SELECT Lieferant_Name, Lieferantenbewertung, Termintreue, `Lieferfüllgrad`, `Durchschnittliche_Verspätung_Tage`\n",
+        "FROM workspace.default.supplier_performance_gold\n",
+        "ORDER BY `Durchschnittliche_Verspätung_Tage` DESC"
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "name": "53dd68dd",
+      "displayName": "Übersicht",
+      "layout": [
+        {
+          "widget": {
+            "name": "verspaetung-pro-lieferant",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "eea9a512",
+                  "fields": [
+                    {
+                      "name": "Lieferant_Name",
+                      "expression": "`Lieferant_Name`"
+                    },
+                    {
+                      "name": "avg(Durchschnittliche_Verspätung_Tage)",
+                      "expression": "AVG(`Durchschnittliche_Verspätung_Tage`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Ø Verspätung pro Lieferant (Tage)"
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "Lieferant_Name",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "y-reversed"
+                    }
+                  },
+                  "displayName": "Lieferant"
+                },
+                "y": {
+                  "fieldName": "avg(Durchschnittliche_Verspätung_Tage)",
+                  "displayName": "Tage",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "format": {
+                    "type": "number-plain",
+                    "decimalPlaces": {
+                      "type": "exact",
+                      "places": 2
+                    }
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "termintreue",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "eea9a512",
+                  "fields": [
+                    {
+                      "name": "avg(Termintreue)",
+                      "expression": "AVG(`Termintreue`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "Termintreue (%)",
+                "showTitle": true
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "avg(Termintreue)",
+                  "format": {
+                    "type": "number-percent",
+                    "decimalPlaces": {
+                      "type": "exact",
+                      "places": 1
+                    }
+                  },
+                  "style": {
+                    "rules": [
+                      {
+                        "condition": {
+                          "operand": {
+                            "type": "data-value",
+                            "value": "0.9"
+                          },
+                          "operator": ">="
+                        },
+                        "color": "#00A972"
+                      },
+                      {
+                        "condition": {
+                          "operand": {
+                            "type": "data-value",
+                            "value": "0.75"
+                          },
+                          "operator": ">="
+                        },
+                        "color": "#FF991F"
+                      },
+                      {
+                        "condition": {
+                          "operand": {
+                            "type": "data-value",
+                            "value": "0.75"
+                          },
+                          "operator": "<"
+                        },
+                        "color": "#E32536"
+                      }
+                    ]
+                  },
+                  "displayName": "Termintreue"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 6,
+            "width": 4,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "lieferfullgrad",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "eea9a512",
+                  "fields": [
+                    {
+                      "name": "avg(Lieferfüllgrad)",
+                      "expression": "AVG(`Lieferfüllgrad`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "Lieferfüllgrad (%)",
+                "showTitle": true
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "avg(Lieferfüllgrad)",
+                  "format": {
+                    "type": "number-percent",
+                    "decimalPlaces": {
+                      "type": "exact",
+                      "places": 1
+                    }
+                  },
+                  "style": {
+                    "rules": [
+                      {
+                        "condition": {
+                          "operand": {
+                            "type": "data-value",
+                            "value": "0.9"
+                          },
+                          "operator": ">="
+                        },
+                        "color": "#00A972"
+                      },
+                      {
+                        "condition": {
+                          "operand": {
+                            "type": "data-value",
+                            "value": "0.7"
+                          },
+                          "operator": ">="
+                        },
+                        "color": "#FF991F"
+                      },
+                      {
+                        "condition": {
+                          "operand": {
+                            "type": "data-value",
+                            "value": "0.7"
+                          },
+                          "operator": "<"
+                        },
+                        "color": "#E32536"
+                      }
+                    ]
+                  },
+                  "displayName": "Lieferfüllgrad"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 6,
+            "width": 4,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "lieferanten-performance-uebersicht",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "tbl_sorted",
+                  "fields": [
+                    {
+                      "name": "Lieferant_Name",
+                      "expression": "`Lieferant_Name`"
+                    },
+                    {
+                      "name": "Lieferantenbewertung",
+                      "expression": "`Lieferantenbewertung`"
+                    },
+                    {
+                      "name": "Termintreue",
+                      "expression": "`Termintreue`"
+                    },
+                    {
+                      "name": "Lieferfüllgrad",
+                      "expression": "`Lieferfüllgrad`"
+                    },
+                    {
+                      "name": "Durchschnittliche_Verspätung_Tage",
+                      "expression": "`Durchschnittliche_Verspätung_Tage`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "Lieferantenleistung je Lieferant",
+                "showTitle": true
+              },
+              "rowsPerPage": 25,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "Lieferant_Name",
+                    "displayName": "Lieferant"
+                  },
+                  {
+                    "fieldName": "Lieferantenbewertung",
+                    "displayName": "Bewertung"
+                  },
+                  {
+                    "fieldName": "Termintreue",
+                    "displayName": "Termintreue",
+                    "style": {
+                      "type": "basic",
+                      "rules": [
+                        {
+                          "condition": {
+                            "operand": {
+                              "type": "data-value",
+                              "value": "0.9"
+                            },
+                            "operator": ">="
+                          },
+                          "backgroundColor": "#D4EDDA",
+                          "foregroundColor": "#155724"
+                        },
+                        {
+                          "condition": {
+                            "operand": {
+                              "type": "data-value",
+                              "value": "0.75"
+                            },
+                            "operator": ">="
+                          },
+                          "backgroundColor": "#FFF3CD",
+                          "foregroundColor": "#856404"
+                        },
+                        {
+                          "condition": {
+                            "operand": {
+                              "type": "data-value",
+                              "value": "0.75"
+                            },
+                            "operator": "<"
+                          },
+                          "backgroundColor": "#F8D7DA",
+                          "foregroundColor": "#721C24"
+                        }
+                      ]
+                    },
+                    "format": {
+                      "type": "number-percent",
+                      "decimalPlaces": {
+                        "type": "exact",
+                        "places": 1
+                      }
+                    }
+                  },
+                  {
+                    "fieldName": "Lieferfüllgrad",
+                    "displayName": "Lieferfüllgrad",
+                    "style": {
+                      "type": "basic",
+                      "rules": [
+                        {
+                          "condition": {
+                            "operand": {
+                              "type": "data-value",
+                              "value": "0.9"
+                            },
+                            "operator": ">="
+                          },
+                          "backgroundColor": "#D4EDDA",
+                          "foregroundColor": "#155724"
+                        },
+                        {
+                          "condition": {
+                            "operand": {
+                              "type": "data-value",
+                              "value": "0.7"
+                            },
+                            "operator": ">="
+                          },
+                          "backgroundColor": "#FFF3CD",
+                          "foregroundColor": "#856404"
+                        },
+                        {
+                          "condition": {
+                            "operand": {
+                              "type": "data-value",
+                              "value": "0.7"
+                            },
+                            "operator": "<"
+                          },
+                          "backgroundColor": "#F8D7DA",
+                          "foregroundColor": "#721C24"
+                        }
+                      ]
+                    },
+                    "format": {
+                      "type": "number-percent",
+                      "decimalPlaces": {
+                        "type": "exact",
+                        "places": 1
+                      }
+                    }
+                  },
+                  {
+                    "fieldName": "Durchschnittliche_Verspätung_Tage",
+                    "displayName": "Ø Verspätung (Tage)",
+                    "format": {
+                      "type": "number-plain",
+                      "decimalPlaces": {
+                        "type": "exact",
+                        "places": 2
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 9,
+            "width": 12,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "97f0d7d4",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "eea9a512",
+                  "fields": [
+                    {
+                      "name": "count(Lieferant_Name)",
+                      "expression": "COUNT(`Lieferant_Name`)"
+                    },
+                    {
+                      "name": "Lieferantenbewertung",
+                      "expression": "`Lieferantenbewertung`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Lieferantenanzahl pro Bewertung",
+                "showTitle": true
+              },
+              "widgetType": "pie",
+              "encodings": {
+                "angle": {
+                  "fieldName": "count(Lieferant_Name)",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "Anzahl Lieferanten"
+                },
+                "color": {
+                  "fieldName": "Lieferantenbewertung",
+                  "displayName": "Bewertung",
+                  "scale": {
+                    "type": "categorical",
+                    "mappings": [
+                      {
+                        "value": "Sehr gut",
+                        "color": "#00A972"
+                      },
+                      {
+                        "value": "Gut",
+                        "color": "#FF991F"
+                      },
+                      {
+                        "value": "Verbesserungsbedarf",
+                        "color": "#E32536"
+                      }
+                    ]
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              }
+            },
+            "specExtensions": {
+              "widgetBorderColor": {
+                "dark": "#11161C"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 15,
+            "width": 6,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "kpi-verspaetung",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "eea9a512",
+                  "fields": [
+                    {
+                      "name": "avg(Durchschnittliche_Verspätung_Tage)",
+                      "expression": "AVG(`Durchschnittliche_Verspätung_Tage`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "Ø Verspätung (Tage)",
+                "showTitle": true,
+                "description": "Durchschnitt über alle 12 Lieferanten",
+                "showDescription": true
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "avg(Durchschnittliche_Verspätung_Tage)",
+                  "displayName": "Ø Verspätung (Tage)",
+                  "format": {
+                    "type": "number-plain",
+                    "decimalPlaces": {
+                      "type": "exact",
+                      "places": 2
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 6,
+            "width": 4,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "bewertung-legende",
+            "multilineTextboxSpec": {
+              "lines": [
+                "### Bewertungslogik\n",
+                "\n",
+                "Die Bewertung basiert auf der **Termintreue** (Anteil der Lieferpositionen mit Ist-Lieferdatum ≤ geplantem Liefertermin):\n",
+                "\n",
+                "- **Sehr gut**: Termintreue ≥ 90 %\n",
+                "- **Gut**: Termintreue ≥ 75 % und < 90 %\n",
+                "- **Verbesserungsbedarf**: Termintreue < 75 %\n",
+                "\n",
+                "**Lieferfüllgrad** = gelieferte Menge / Einteilungsmenge (max. 100 %)\n",
+                "\n",
+                "**Ø Verspätung** = Tage nach geplantem Liefertermin; frühere Lieferungen zählen als 0\n",
+                "\n",
+                "*Datenbasis: synthetische SAP-MM-Tabellen (EKKO, EKPO, EKET, LIKP, LIPS, LFA1)*"
+              ]
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 15,
+            "width": 6,
+            "height": 7
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "082f4733",
+      "displayName": "Global Filters",
+      "layout": [
+        {
+          "widget": {
+            "name": "filter-bewertung",
+            "queries": [
+              {
+                "name": "q_Lieferantenbewertung_gold",
+                "query": {
+                  "datasetName": "eea9a512",
+                  "fields": [
+                    {
+                      "name": "Lieferantenbewertung",
+                      "expression": "`Lieferantenbewertung`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "q_Lieferantenbewertung_tbl",
+                "query": {
+                  "datasetName": "tbl_sorted",
+                  "fields": [
+                    {
+                      "name": "Lieferantenbewertung",
+                      "expression": "`Lieferantenbewertung`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "Lieferantenbewertung",
+                    "displayName": "Bewertung",
+                    "queryName": "q_Lieferantenbewertung_gold"
+                  },
+                  {
+                    "fieldName": "Lieferantenbewertung",
+                    "displayName": "Bewertung",
+                    "queryName": "q_Lieferantenbewertung_tbl"
+                  }
+                ]
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Bewertung"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 1,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "filter-lieferant",
+            "queries": [
+              {
+                "name": "q_Lieferant_Name_gold",
+                "query": {
+                  "datasetName": "eea9a512",
+                  "fields": [
+                    {
+                      "name": "Lieferant_Name",
+                      "expression": "`Lieferant_Name`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "q_Lieferant_Name_tbl",
+                "query": {
+                  "datasetName": "tbl_sorted",
+                  "fields": [
+                    {
+                      "name": "Lieferant_Name",
+                      "expression": "`Lieferant_Name`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "Lieferant_Name",
+                    "displayName": "Lieferant",
+                    "queryName": "q_Lieferant_Name_gold"
+                  },
+                  {
+                    "fieldName": "Lieferant_Name",
+                    "displayName": "Lieferant",
+                    "queryName": "q_Lieferant_Name_tbl"
+                  }
+                ]
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Lieferant"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 2,
+            "width": 1,
+            "height": 2
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_GLOBAL_FILTERS",
+      "layoutVersion": "GRID_V1"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "widgetHeaderAlignment": "ALIGNMENT_UNSPECIFIED"
+    },
+    "applyModeEnabled": false
+  }
+}
