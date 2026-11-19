@@ -1,0 +1,26 @@
+{
+  "name": "supplier_performance_pipeline",
+  "max_concurrent_runs": 1,
+  "schedule": {
+    "quartz_cron_expression": "0 0 6 * * ?",
+    "timezone_id": "Europe/Berlin",
+    "pause_status": "UNPAUSED"
+  },
+  "tags": {
+    "project": "supplier-performance"
+  },
+  "tasks": [
+    {
+      "task_key": "bronze_silver_gold",
+      "description": "Load raw SAP MM CSVs (bronze), match deliveries to schedule lines (silver), compute supplier KPIs and rating (gold)",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/<your-user>/Supplier_Performance",
+        "source": "WORKSPACE"
+      },
+      "timeout_seconds": 1800
+    }
+  ],
+  "queue": {
+    "enabled": true
+  }
+}
